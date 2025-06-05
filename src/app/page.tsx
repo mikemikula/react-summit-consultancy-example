@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LeadForm from '@/components/LeadForm';
 
 export default function Home() {
   return (
@@ -132,30 +133,199 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section id="contact" className="bg-blue-600 dark:bg-blue-800">
+      {/* Lead Generation Section */}
+      <section
+        id="contact"
+        className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900"
+      >
         <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 gap-x-16 gap-y-16 lg:grid-cols-2 lg:gap-y-0">
+              {/* Left Column - Value Proposition */}
+              <div className="lg:pr-8">
+                <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  Get Your Free Salesforce Assessment
+                </h2>
+                <p className="mt-6 text-lg leading-8 text-blue-100">
+                  Discover how to maximize your Salesforce investment with a
+                  personalized consultation from our certified experts.
+                </p>
+
+                {/* Benefits List */}
+                <div className="mt-10 space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="h-6 w-6 text-blue-200"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-lg font-semibold text-white">
+                        Free 30-Minute Strategy Session
+                      </h3>
+                      <p className="text-blue-100">
+                        Discuss your current challenges and identify quick wins
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="h-6 w-6 text-blue-200"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-lg font-semibold text-white">
+                        Custom ROI Analysis
+                      </h3>
+                      <p className="text-blue-100">
+                        Understand the potential return on your Salesforce
+                        optimization
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="h-6 w-6 text-blue-200"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-lg font-semibold text-white">
+                        Implementation Roadmap
+                      </h3>
+                      <p className="text-blue-100">
+                        Get a clear plan with timelines and priority
+                        recommendations
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Trust Signals */}
+                <div className="mt-10 border-t border-blue-500 pt-8">
+                  <div className="flex items-center space-x-6 text-blue-100">
+                    <div className="flex items-center">
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75m3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.623 0-1.31-.21-2.571-.598-3.751z"
+                        />
+                      </svg>
+                      <span className="text-sm">Your data is secure</span>
+                    </div>
+                    <div className="flex items-center">
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span className="text-sm">Response within 2 hours</span>
+                    </div>
+                    <div className="flex items-center">
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636"
+                        />
+                      </svg>
+                      <span className="text-sm">No spam, ever</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Lead Form */}
+              <div className="lg:pl-8">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
+                  <div className="mb-6">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      Start Your Salesforce Transformation
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">
+                      Fill out the form below and we&apos;ll get back to you
+                      within 2 business hours.
+                    </p>
+                  </div>
+                  <LeadForm />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Secondary CTA Section */}
+      <section className="bg-gray-50 dark:bg-gray-900 py-16">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Ready to Transform Your Business?
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
+              Explore Our Services
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-blue-100">
-              Let&apos;s discuss how we can help you unlock the full potential
-              of Salesforce for your organization. Contact us for a free
-              consultation.
+            <p className="mx-auto mt-4 max-w-xl text-base leading-6 text-gray-600 dark:text-gray-300">
+              Learn more about our comprehensive Salesforce solutions and how we
+              can help your business grow.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
+            <div className="mt-8">
               <Link
                 href="/services"
-                className="rounded-md bg-white px-6 py-3 text-base font-semibold text-blue-600 shadow-sm hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors"
+                className="rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
               >
-                Get Started Today
-              </Link>
-              <Link
-                href="/privacy"
-                className="text-base font-semibold leading-6 text-white hover:text-blue-100 transition-colors"
-              >
-                Learn More <span aria-hidden="true">→</span>
+                View All Services
               </Link>
             </div>
           </div>

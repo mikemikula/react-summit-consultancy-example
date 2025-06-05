@@ -42,7 +42,7 @@ export default function LeadForm(): JSX.Element {
   /**
    * Handle form submission with comprehensive error handling and user feedback
    * Processes lead data, validates, and submits to API endpoint
-   * 
+   *
    * @param data - Validated form data from React Hook Form
    */
   const onSubmit = async (data: LeadFormData): Promise<void> => {
@@ -67,9 +67,13 @@ export default function LeadForm(): JSX.Element {
         if (result.errors) {
           // Handle field-specific errors
           const firstError = Object.values(result.errors)[0]?.[0];
-          setSubmitError(firstError || 'Please check your information and try again.');
+          setSubmitError(
+            firstError || 'Please check your information and try again.'
+          );
         } else {
-          setSubmitError(result.message || 'An error occurred. Please try again.');
+          setSubmitError(
+            result.message || 'An error occurred. Please try again.'
+          );
         }
         return;
       }
@@ -82,12 +86,13 @@ export default function LeadForm(): JSX.Element {
       setTimeout(() => {
         router.push('/thank-you');
       }, 1500);
-
-         } catch (error) {
-       // eslint-disable-next-line no-console
-       console.error('Form submission error:', error);
-       setSubmitError('Network error. Please check your connection and try again.');
-     } finally {
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Form submission error:', error);
+      setSubmitError(
+        'Network error. Please check your connection and try again.'
+      );
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -104,22 +109,23 @@ export default function LeadForm(): JSX.Element {
 
   /**
    * Generate CSS classes for form inputs based on validation state
-   * Provides visual feedback for validation status
-   * 
+   * Provides visual feedback for validation status with high contrast
+   *
    * @param fieldName - Name of the form field
    * @returns CSS class string for styling
    */
   const getInputClasses = (fieldName: keyof LeadFormData): string => {
-    const baseClasses = 'mt-2 block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-colors duration-200';
-    
+    const baseClasses =
+      'mt-2 block w-full rounded-md border-0 px-3.5 py-2 bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-colors duration-200';
+
     if (errors[fieldName]) {
-      return `${baseClasses} ring-red-300 focus:ring-red-600`;
+      return `${baseClasses} ring-red-400 focus:ring-red-600 bg-red-50`;
     }
-    
+
     if (touchedFields[fieldName] && !errors[fieldName]) {
-      return `${baseClasses} ring-green-300 focus:ring-green-600`;
+      return `${baseClasses} ring-green-400 focus:ring-green-600 bg-green-50`;
     }
-    
+
     return baseClasses;
   };
 
@@ -149,7 +155,9 @@ export default function LeadForm(): JSX.Element {
                 Thank you for your submission!
               </h3>
               <div className="mt-2 text-sm text-green-700">
-                <p>We&apos;ll get back to you within 24 hours. Redirecting...</p>
+                <p>
+                  We&apos;ll get back to you within 24 hours. Redirecting...
+                </p>
               </div>
             </div>
           </div>
@@ -164,7 +172,10 @@ export default function LeadForm(): JSX.Element {
         {/* First Name and Last Name Row */}
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           <div>
-            <label htmlFor="firstName" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-semibold leading-6 text-gray-900"
+            >
               First name *
             </label>
             <div className="mt-2.5">
@@ -176,11 +187,17 @@ export default function LeadForm(): JSX.Element {
                 className={getInputClasses('firstName')}
                 placeholder="Your first name"
                 onFocus={handleInputFocus}
-                aria-describedby={errors.firstName ? 'firstName-error' : undefined}
+                aria-describedby={
+                  errors.firstName ? 'firstName-error' : undefined
+                }
                 aria-invalid={errors.firstName ? 'true' : 'false'}
               />
               {errors.firstName && (
-                <p id="firstName-error" className="mt-2 text-sm text-red-600" role="alert">
+                <p
+                  id="firstName-error"
+                  className="mt-2 text-sm text-red-600"
+                  role="alert"
+                >
                   {errors.firstName.message}
                 </p>
               )}
@@ -188,7 +205,10 @@ export default function LeadForm(): JSX.Element {
           </div>
 
           <div>
-            <label htmlFor="lastName" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-semibold leading-6 text-gray-900"
+            >
               Last name *
             </label>
             <div className="mt-2.5">
@@ -200,11 +220,17 @@ export default function LeadForm(): JSX.Element {
                 className={getInputClasses('lastName')}
                 placeholder="Your last name"
                 onFocus={handleInputFocus}
-                aria-describedby={errors.lastName ? 'lastName-error' : undefined}
+                aria-describedby={
+                  errors.lastName ? 'lastName-error' : undefined
+                }
                 aria-invalid={errors.lastName ? 'true' : 'false'}
               />
               {errors.lastName && (
-                <p id="lastName-error" className="mt-2 text-sm text-red-600" role="alert">
+                <p
+                  id="lastName-error"
+                  className="mt-2 text-sm text-red-600"
+                  role="alert"
+                >
                   {errors.lastName.message}
                 </p>
               )}
@@ -214,7 +240,10 @@ export default function LeadForm(): JSX.Element {
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+          <label
+            htmlFor="email"
+            className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+          >
             Email address *
           </label>
           <div className="mt-2.5">
@@ -230,7 +259,11 @@ export default function LeadForm(): JSX.Element {
               aria-invalid={errors.email ? 'true' : 'false'}
             />
             {errors.email && (
-              <p id="email-error" className="mt-2 text-sm text-red-600" role="alert">
+              <p
+                id="email-error"
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+              >
                 {errors.email.message}
               </p>
             )}
@@ -239,7 +272,10 @@ export default function LeadForm(): JSX.Element {
 
         {/* Company */}
         <div>
-          <label htmlFor="company" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+          <label
+            htmlFor="company"
+            className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+          >
             Company *
           </label>
           <div className="mt-2.5">
@@ -255,7 +291,11 @@ export default function LeadForm(): JSX.Element {
               aria-invalid={errors.company ? 'true' : 'false'}
             />
             {errors.company && (
-              <p id="company-error" className="mt-2 text-sm text-red-600" role="alert">
+              <p
+                id="company-error"
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+              >
                 {errors.company.message}
               </p>
             )}
@@ -264,7 +304,10 @@ export default function LeadForm(): JSX.Element {
 
         {/* Phone */}
         <div>
-          <label htmlFor="phone" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+          <label
+            htmlFor="phone"
+            className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+          >
             Phone number <span className="text-gray-500">(optional)</span>
           </label>
           <div className="mt-2.5">
@@ -280,7 +323,11 @@ export default function LeadForm(): JSX.Element {
               aria-invalid={errors.phone ? 'true' : 'false'}
             />
             {errors.phone && (
-              <p id="phone-error" className="mt-2 text-sm text-red-600" role="alert">
+              <p
+                id="phone-error"
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+              >
                 {errors.phone.message}
               </p>
             )}
@@ -289,7 +336,10 @@ export default function LeadForm(): JSX.Element {
 
         {/* Message */}
         <div>
-          <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+          <label
+            htmlFor="message"
+            className="block text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+          >
             Message *
           </label>
           <div className="mt-2.5">
@@ -304,7 +354,11 @@ export default function LeadForm(): JSX.Element {
               aria-invalid={errors.message ? 'true' : 'false'}
             />
             {errors.message && (
-              <p id="message-error" className="mt-2 text-sm text-red-600" role="alert">
+              <p
+                id="message-error"
+                className="mt-2 text-sm text-red-600"
+                role="alert"
+              >
                 {errors.message.message}
               </p>
             )}
@@ -331,7 +385,9 @@ export default function LeadForm(): JSX.Element {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Submission Error</h3>
+                <h3 className="text-sm font-medium text-red-800">
+                  Submission Error
+                </h3>
                 <div className="mt-2 text-sm text-red-700">
                   <p>{submitError}</p>
                 </div>
@@ -347,9 +403,10 @@ export default function LeadForm(): JSX.Element {
             disabled={isSubmitting || !isValid}
             className={`
               w-full rounded-md px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-              ${isSubmitting || !isValid
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-500 focus-visible:outline-blue-600'
+              ${
+                isSubmitting || !isValid
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-500 focus-visible:outline-blue-600'
               }
             `}
             aria-describedby="submit-help"
@@ -382,7 +439,10 @@ export default function LeadForm(): JSX.Element {
               'Get Started Today'
             )}
           </button>
-          <p id="submit-help" className="mt-2 text-xs text-gray-500 text-center">
+          <p
+            id="submit-help"
+            className="mt-2 text-xs text-gray-500 text-center"
+          >
             By submitting this form, you agree to our{' '}
             <a href="/privacy" className="text-blue-600 hover:text-blue-500">
               privacy policy
@@ -393,4 +453,4 @@ export default function LeadForm(): JSX.Element {
       </form>
     </div>
   );
-} 
+}

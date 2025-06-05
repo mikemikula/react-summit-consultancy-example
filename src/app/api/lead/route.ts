@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
+// import { headers } from 'next/headers';
 import { validateLeadData } from '@/validators/leadSchema';
 import { prisma } from '../../../../lib/prisma';
 import type { LeadSubmissionResponse } from '@/types/lead';
@@ -14,17 +14,18 @@ import type { LeadSubmissionResponse } from '@/types/lead';
 /**
  * Handle POST request for lead form submissions
  * Processes lead data with validation, database insertion, and email sending
- * 
+ *
  * @param request - Next.js request object containing lead form data
  * @returns JSON response with success/error status and appropriate data
  */
-export async function POST(request: NextRequest): Promise<NextResponse<LeadSubmissionResponse>> {
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<LeadSubmissionResponse>> {
   try {
-    // Rate limiting check - get client IP and headers for tracking
-    const headersList = headers();
-    const userAgent = headersList.get('user-agent') || '';
-    const forwarded = headersList.get('x-forwarded-for');
-    const clientIp = forwarded ? forwarded.split(',')[0] : request.ip || 'unknown';
+    // Rate limiting check - get client IP and headers for tracking (for future use)
+    // const headersList = await headers();
+    // const forwarded = headersList.get('x-forwarded-for');
+    // const clientIp = forwarded ? forwarded.split(',')[0] : 'unknown';
 
     // TODO: Implement rate limiting when rateLimiter is available
     // const rateLimitResult = await checkRateLimit(clientIp);
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<LeadSubmi
     let requestBody: unknown;
     try {
       requestBody = await request.json();
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -79,8 +80,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<LeadSubmi
 
     if (existingLead) {
       // Return success to prevent email enumeration but log internally
+      // eslint-disable-next-line no-console
       console.log(`Duplicate submission attempt for email: ${leadData.email}`);
-      
+
       // Still return success to user for security reasons
       return NextResponse.json(
         {
@@ -118,28 +120,30 @@ export async function POST(request: NextRequest): Promise<NextResponse<LeadSubmi
     // }
 
     // Log successful submission for analytics
+    // eslint-disable-next-line no-console
     console.log(`New lead created: ${newLead.id} from ${leadData.company}`);
 
     // Return success response
     return NextResponse.json(
       {
         success: true,
-        message: 'Thank you for your submission. We will be in touch within 24 hours.',
+        message:
+          'Thank you for your submission. We will be in touch within 24 hours.',
         data: { leadId: newLead.id },
         redirectUrl: '/thank-you',
         timestamp: new Date().toISOString(),
       },
       { status: 201 }
     );
-
   } catch (error) {
     // Log error for debugging but don't expose internal details
+    // eslint-disable-next-line no-console
     console.error('Lead submission error:', error);
 
     // Check if it's a database constraint error
     if (error && typeof error === 'object' && 'code' in error) {
       const dbError = error as { code: string; meta?: { target?: string[] } };
-      
+
       if (dbError.code === 'P2002') {
         // Unique constraint violation (likely email)
         return NextResponse.json(
@@ -217,4 +221,4 @@ export async function PATCH(): Promise<NextResponse> {
     },
     { status: 405 }
   );
-} 
+}
