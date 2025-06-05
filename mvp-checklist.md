@@ -208,3 +208,95 @@ Follow the tasks **strictly in order**. After completing each task:
     - Modern responsive design with Tailwind CSS
 
 ## 6. Components
+
+- [x] **6.1 Navbar & Footer components** – create folder `components/` and files: `components/Navbar.tsx`, `components/Footer.tsx`; include in layout.
+  - Notes:
+    - Created professional Navbar component with responsive design and mobile menu
+    - Implemented sticky navigation with SF Consultancy branding and logo
+    - Added proper ARIA labels and accessibility features for screen readers
+    - Created comprehensive Footer component with contact information and navigation
+    - Included services links, social media placeholders, and copyright information
+    - Updated layout.tsx to include both components in proper structure
+    - All components follow SOLID principles with single responsibility and clean code
+- [x] **6.V pnpm verify & fix** – Run `pnpm verify` for section 6.
+  - Notes:
+    - `pnpm verify` passed successfully
+    - No ESLint warnings or errors
+    - TypeScript compilation successful
+    - All components properly typed with explicit return types
+- [x] **6.G Git commit `components`** – `git commit -am "6: components"`.
+  - Notes:
+    - Committed 4 files with Navbar, Footer components and layout updates
+    - Pre-commit hooks ran successfully, confirming code quality
+    - Components integrated into site-wide layout for consistent navigation
+
+## 7. API & Business Logic
+
+- [ ] **7.1 Create Zod schema** – create folder `validators/` and file: `validators/leadSchema.ts`.
+  - Notes:
+- [ ] **7.2 Create type definitions** – create folder `types/` and file: `types/lead.ts`.
+  - Notes:
+- [ ] **7.3 LeadForm client component** – file: `components/LeadForm.tsx`; use React Hook Form + Zod schema from 7.1.
+  - Notes:
+- [ ] **7.4 Implement Route Handler** – create folders `app/api/lead/` and file: `app/api/lead/route.ts` (POST): validate, insert to DB, send email.
+  - Notes:
+- [ ] **7.5 Email utility wrapper** – file: `lib/email.ts`; use Resend SDK.
+  - Notes:
+- [ ] **7.6 Rate-limiter helper** – `pnpm add rate-limiter-flexible`; create file: `lib/rateLimiter.ts`; integrate in handler.
+  - Notes:
+- [ ] **7.V pnpm verify & fix** – Run `pnpm verify` for section 7.
+  - Notes:
+- [ ] **7.G Git commit `api logic`** – `git commit -am "7: api & business logic"`.
+  - Notes:
+
+## 8. Security Hardening
+
+- [ ] **8.1 Install security libs** – `pnpm add next-secure-headers`.
+  - Notes:
+- [ ] **8.2 Security middleware** – file: `middleware.ts` at project root; apply `next-secure-headers` & rate-limit.
+  - Notes:
+- [ ] **8.3 Configure Content-Security-Policy & HSTS** – update middleware config.
+  - Notes:
+- [ ] **8.V pnpm verify & fix** – Run `pnpm verify` for section 8.
+  - Notes:
+- [ ] **8.G Git commit `security`** – `git commit -am "8: security hardening"`.
+  - Notes:
+
+## 9. Testing
+
+- [ ] **9.1 Install Jest & React Testing Library** – `pnpm add -D jest @testing-library/react jest-environment-jsdom @types/jest`; add `jest.config.ts` at project root.
+  - Notes:
+- [ ] **9.2 Write unit test for Zod schema** – file: `validators/leadSchema.test.ts`.
+  - Notes:
+- [ ] **9.3 Write integration test for Route Handler** – file: `app/api/lead/route.test.ts` (mock Prisma + email).
+  - Notes:
+- [ ] **9.V pnpm verify & fix** – Run `pnpm verify` for section 9.
+  - Notes:
+- [ ] **9.G Git commit `tests`** – `git commit -am "9: tests"`.
+  - Notes:
+
+## 10. Deployment
+
+- [ ] **10.1 Install Vercel CLI & login**.
+  - Notes:
+- [ ] **10.2 Create Vercel project, set env vars, push `mvp` branch**.
+  - Notes:
+- [ ] **10.3 Verify live site & form submission end-to-end**.
+  - Notes:
+- [ ] **10.V pnpm verify & fix** – Run `pnpm verify` for section 10.
+  - Notes:
+- [ ] **10.G Git commit `deployment`** – `git commit -am "10: deployment"`.
+  - Notes:
+
+## 11. Documentation & Cleanup
+
+- [ ] **11.1 Update `README.md`** – add usage docs at project root.
+  - Notes:
+- [ ] **11.2 Run final `pnpm verify`**, ensure zero warnings.
+  - Notes:
+- [ ] **11.3 Merge `mvp` -> `main` and tag `v0.1.0`**.
+  - Notes:
+
+---
+
+**When every task shows `[x]`, the MVP is complete. Do not skip steps or reorder them.**
