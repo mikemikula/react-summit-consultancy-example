@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
-import type { LeadFormData, LeadNotificationEmail, WelcomeEmail } from '@/types/lead';
+import type { LeadFormData } from '@/types/lead';
+// import type { LeadNotificationEmail, WelcomeEmail } from '@/types/lead';
 
 /**
  * Email utility wrapper for SF Consultancy using Resend SDK
@@ -29,7 +30,7 @@ interface EmailResult {
 /**
  * Send lead notification email to admin team
  * Notifies the sales team when a new lead is submitted through the contact form
- * 
+ *
  * @param leadData - Validated lead form data
  * @param leadId - Database ID of the created lead
  * @param submissionTime - Timestamp of form submission
@@ -43,6 +44,7 @@ export async function sendLeadNotificationEmail(
   try {
     // Validate required environment variables
     if (!process.env.RESEND_API_KEY) {
+      // eslint-disable-next-line no-console
       console.error('RESEND_API_KEY environment variable is not configured');
       return {
         success: false,
@@ -52,9 +54,17 @@ export async function sendLeadNotificationEmail(
 
     // Generate email content
     const subject = `New Lead: ${leadData.firstName} ${leadData.lastName} from ${leadData.company}`;
-    
-    const htmlContent = generateLeadNotificationHtml(leadData, leadId, submissionTime);
-    const textContent = generateLeadNotificationText(leadData, leadId, submissionTime);
+
+    const htmlContent = generateLeadNotificationHtml(
+      leadData,
+      leadId,
+      submissionTime
+    );
+    const textContent = generateLeadNotificationText(
+      leadData,
+      leadId,
+      submissionTime
+    );
 
     // Send email using Resend
     const result = await resend.emails.send({
@@ -72,6 +82,7 @@ export async function sendLeadNotificationEmail(
     });
 
     if (result.error) {
+      // eslint-disable-next-line no-console
       console.error('Resend API error:', result.error);
       return {
         success: false,
@@ -80,14 +91,17 @@ export async function sendLeadNotificationEmail(
       };
     }
 
-    console.log(`Lead notification email sent successfully: ${result.data?.id}`);
-    
+    // eslint-disable-next-line no-console
+    console.log(
+      `Lead notification email sent successfully: ${result.data?.id}`
+    );
+
     return {
       success: true,
       messageId: result.data?.id,
     };
-
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Email sending error:', error);
     return {
       success: false,
@@ -100,7 +114,7 @@ export async function sendLeadNotificationEmail(
 /**
  * Send welcome email to the lead/customer
  * Acknowledges receipt of their inquiry and sets expectations
- * 
+ *
  * @param leadData - Validated lead form data
  * @param leadId - Database ID of the created lead
  * @returns Promise with email sending result
@@ -118,7 +132,7 @@ export async function sendWelcomeEmail(
     }
 
     const subject = `Thank you for contacting SF Consultancy, ${leadData.firstName}!`;
-    
+
     const htmlContent = generateWelcomeEmailHtml(leadData, leadId);
     const textContent = generateWelcomeEmailText(leadData, leadId);
 
@@ -137,6 +151,7 @@ export async function sendWelcomeEmail(
     });
 
     if (result.error) {
+      // eslint-disable-next-line no-console
       console.error('Welcome email error:', result.error);
       return {
         success: false,
@@ -149,8 +164,8 @@ export async function sendWelcomeEmail(
       success: true,
       messageId: result.data?.id,
     };
-
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Welcome email error:', error);
     return {
       success: false,
@@ -163,7 +178,7 @@ export async function sendWelcomeEmail(
 /**
  * Generate HTML content for lead notification email
  * Creates professional email template for internal team notifications
- * 
+ *
  * @param leadData - Lead form data
  * @param leadId - Database lead ID
  * @param submissionTime - Form submission timestamp
@@ -242,7 +257,7 @@ function generateLeadNotificationHtml(
 /**
  * Generate plain text content for lead notification email
  * Provides accessible fallback for email clients that don't support HTML
- * 
+ *
  * @param leadData - Lead form data
  * @param leadId - Database lead ID
  * @param submissionTime - Form submission timestamp
@@ -281,12 +296,15 @@ SF Consultancy Lead Management System
 /**
  * Generate HTML content for welcome email to leads
  * Creates professional welcome message with next steps
- * 
+ *
  * @param leadData - Lead form data
  * @param leadId - Database lead ID
  * @returns HTML welcome email content
  */
-function generateWelcomeEmailHtml(leadData: LeadFormData, leadId: string): string {
+function generateWelcomeEmailHtml(
+  leadData: LeadFormData,
+  leadId: string
+): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -348,12 +366,15 @@ function generateWelcomeEmailHtml(leadData: LeadFormData, leadId: string): strin
 /**
  * Generate plain text content for welcome email
  * Provides accessible fallback version of the welcome message
- * 
+ *
  * @param leadData - Lead form data
  * @param leadId - Database lead ID
  * @returns Plain text welcome email content
  */
-function generateWelcomeEmailText(leadData: LeadFormData, leadId: string): string {
+function generateWelcomeEmailText(
+  leadData: LeadFormData,
+  leadId: string
+): string {
   return `
 Thank You, ${leadData.firstName}!
 
@@ -383,7 +404,7 @@ https://sf-consultancy.com | info@sf-consultancy.com
 /**
  * Health check function to verify email service configuration
  * Useful for monitoring and debugging email functionality
- * 
+ *
  * @returns Promise with configuration status
  */
 export async function checkEmailConfiguration(): Promise<{
@@ -403,11 +424,11 @@ export async function checkEmailConfiguration(): Promise<{
     return {
       configured: true,
     };
-
   } catch (error) {
     return {
       configured: false,
-      error: error instanceof Error ? error.message : 'Unknown configuration error',
+      error:
+        error instanceof Error ? error.message : 'Unknown configuration error',
     };
   }
-} 
+}

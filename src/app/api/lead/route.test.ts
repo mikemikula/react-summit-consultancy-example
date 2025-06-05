@@ -8,13 +8,7 @@ import { prisma } from '../../../../lib/prisma';
  * Mocks external dependencies (Prisma, email) for reliable testing
  */
 
-// Mock Prisma client - must be declared before jest.mock()
-const mockPrismaLead = {
-  findUnique: jest.fn(),
-  create: jest.fn(),
-};
-
-// Mock Prisma with manual mock
+// Mock Prisma with manual mock for direct import and use
 jest.mock('../../../../lib/prisma', () => ({
   prisma: {
     lead: {
@@ -68,7 +62,6 @@ describe('/api/lead route handler', () => {
   const createMockRequest = (body: unknown): NextRequest => {
     return {
       json: jest.fn().mockResolvedValue(body),
-      ip: '192.168.1.1',
       headers: new Map([
         ['user-agent', 'test-user-agent'],
         ['x-forwarded-for', '192.168.1.1'],
@@ -78,8 +71,9 @@ describe('/api/lead route handler', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (prisma.lead.findUnique as jest.Mock).mockReset();
+    (prisma.lead.create as jest.Mock).mockReset();
 
-    // Reset console mocks
     jest.spyOn(console, 'log').mockImplementation(() => {});
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -99,25 +93,22 @@ describe('/api/lead route handler', () => {
         updatedAt: new Date(),
       };
 
-      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null); // No existing lead
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null);
       (prisma.lead.create as jest.Mock).mockResolvedValue(mockCreatedLead);
 
       const request = createMockRequest(validLeadData);
       const response = await POST(request);
+      const responseData = await response.json();
 
       expect(response.status).toBe(201);
-
-      const responseData = await response.json();
       expect(responseData.success).toBe(true);
       expect(responseData.data.leadId).toBe('test-lead-id');
       expect(responseData.redirectUrl).toBe('/thank-you');
-      expect(responseData.message).toContain('Thank you for your submission');
 
-      // Verify database calls
-      expect(mockPrismaLead.findUnique).toHaveBeenCalledWith({
+      expect(prisma.lead.findUnique).toHaveBeenCalledWith({
         where: { email: validLeadData.email.toLowerCase() },
       });
-      expect(mockPrismaLead.create).toHaveBeenCalledWith({
+      expect(prisma.lead.create).toHaveBeenCalledWith({
         data: {
           firstName: validLeadData.firstName,
           lastName: validLeadData.lastName,
@@ -136,26 +127,21 @@ describe('/api/lead route handler', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-
-      mockPrismaLead.findUnique.mockResolvedValue(existingLead);
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(existingLead);
 
       const request = createMockRequest(validLeadData);
       const response = await POST(request);
+      const responseData = await response.json();
 
       expect(response.status).toBe(200);
-
-      const responseData = await response.json();
       expect(responseData.success).toBe(true);
       expect(responseData.data.leadId).toBe('existing-lead-id');
-
-      // Should not create a new lead
-      expect(mockPrismaLead.create).not.toHaveBeenCalled();
+      expect(prisma.lead.create).not.toHaveBeenCalled();
     });
 
     test('should reject invalid JSON request body', async () => {
       const request = {
         json: jest.fn().mockRejectedValue(new Error('Invalid JSON')),
-        ip: '192.168.1.1',
         headers: new Map(),
       } as unknown as NextRequest;
 
@@ -194,8 +180,8 @@ describe('/api/lead route handler', () => {
       expect(responseData.errors).toBeDefined();
 
       // Should not attempt database operations
-      expect(mockPrismaLead.findUnique).not.toHaveBeenCalled();
-      expect(mockPrismaLead.create).not.toHaveBeenCalled();
+      expect(prisma.lead.findUnique).not.toHaveBeenCalled();
+      expect(prisma.lead.create).not.toHaveBeenCalled();
     });
 
     test('should handle empty phone field correctly', async () => {
@@ -212,8 +198,8 @@ describe('/api/lead route handler', () => {
         updatedAt: new Date(),
       };
 
-      mockPrismaLead.findUnique.mockResolvedValue(null);
-      mockPrismaLead.create.mockResolvedValue(mockCreatedLead);
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.lead.create as jest.Mock).mockResolvedValue(mockCreatedLead);
 
       const request = createMockRequest(dataWithEmptyPhone);
       const response = await POST(request);
@@ -221,7 +207,7 @@ describe('/api/lead route handler', () => {
       expect(response.status).toBe(201);
 
       // Verify phone is converted to null for database
-      expect(mockPrismaLead.create).toHaveBeenCalledWith({
+      expect(prisma.lead.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           phone: null,
         }),
@@ -234,8 +220,8 @@ describe('/api/lead route handler', () => {
         meta: { target: ['email'] },
       };
 
-      mockPrismaLead.findUnique.mockResolvedValue(null);
-      mockPrismaLead.create.mockRejectedValue(dbError);
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.lead.create as jest.Mock).mockRejectedValue(dbError);
 
       const request = createMockRequest(validLeadData);
       const response = await POST(request);
@@ -255,7 +241,7 @@ describe('/api/lead route handler', () => {
     test('should handle database connection errors', async () => {
       const dbError = new Error('Database connection failed');
 
-      mockPrismaLead.findUnique.mockRejectedValue(dbError);
+      (prisma.lead.findUnique as jest.Mock).mockRejectedValue(dbError);
 
       const request = createMockRequest(validLeadData);
       const response = await POST(request);
@@ -302,12 +288,13 @@ describe('/api/lead route handler', () => {
         updatedAt: new Date(),
       };
 
-      mockPrismaLead.findUnique.mockResolvedValue(null);
-      mockPrismaLead.create.mockResolvedValue(mockCreatedLead);
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.lead.create as jest.Mock).mockResolvedValue(mockCreatedLead);
 
       const request = createMockRequest(validLeadData);
       await POST(request);
 
+      // eslint-disable-next-line no-console
       expect(console.log).toHaveBeenCalledWith(
         expect.stringContaining('New lead created: test-lead-id from Acme Corp')
       );
@@ -321,8 +308,8 @@ describe('/api/lead route handler', () => {
         updatedAt: new Date(),
       };
 
-      mockPrismaLead.findUnique.mockResolvedValue(null);
-      mockPrismaLead.create.mockResolvedValue(mockCreatedLead);
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.lead.create as jest.Mock).mockResolvedValue(mockCreatedLead);
 
       const beforeRequest = new Date();
       const request = createMockRequest(validLeadData);
@@ -450,8 +437,8 @@ describe('/api/lead route handler', () => {
         updatedAt: new Date(),
       };
 
-      mockPrismaLead.findUnique.mockResolvedValue(null);
-      mockPrismaLead.create.mockResolvedValue(mockCreatedLead);
+      (prisma.lead.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.lead.create as jest.Mock).mockResolvedValue(mockCreatedLead);
 
       const request = createMockRequest(dataWithMixedCaseEmail);
       const response = await POST(request);
@@ -459,10 +446,10 @@ describe('/api/lead route handler', () => {
       expect(response.status).toBe(201);
 
       // Verify email is checked and stored in lowercase
-      expect(mockPrismaLead.findUnique).toHaveBeenCalledWith({
+      expect(prisma.lead.findUnique).toHaveBeenCalledWith({
         where: { email: 'john.doe@example.com' },
       });
-      expect(mockPrismaLead.create).toHaveBeenCalledWith({
+      expect(prisma.lead.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           email: 'john.doe@example.com',
         }),

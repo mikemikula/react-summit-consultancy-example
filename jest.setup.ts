@@ -130,3 +130,104 @@ afterEach(() => {
 
 // Global test timeout for async operations
 jest.setTimeout(10000);
+
+// Mock Next.js Server Components and Web APIs
+// global.Request = jest.fn(); // Already defined with more detail below
+// global.Response = jest.fn(); // Will be refined below
+
+// Mock next/server's NextResponse
+jest.mock('next/server', () => {
+  const originalModule = jest.requireActual('next/server');
+  class MockNextResponse extends originalModule.NextResponse {
+    constructor(body: BodyInit | null, init?: ResponseInit) {
+      super(body, init);
+    }
+    // Ensure .json() method is available on instances if needed by some tests,
+    // though static NextResponse.json() is more common.
+    // This instance .json() should match what a real Response instance .json() does.
+    async json() {
+      try {
+        const bodyStream = (
+          this as unknown as { body?: ReadableStream<Uint8Array> }
+        ).body;
+        if (!bodyStream) return {};
+        const reader = bodyStream.getReader();
+        const decoder = new TextDecoder();
+        let result = '';
+        let chunk = await reader.read();
+        while (!chunk.done) {
+          result += decoder.decode(chunk.value, { stream: true });
+          chunk = await reader.read();
+        }
+        result += decoder.decode(); // Flush remaining
+        return JSON.parse(result || '{}');
+      } catch {
+        return {}; // Fallback for empty or non-JSON body
+      }
+    }
+  }
+
+  return {
+    ...originalModule,
+    NextResponse: {
+      ...originalModule.NextResponse, // Spread static properties like next()
+      // Mock the static NextResponse.json(body, init) method
+      json: jest.fn((body, init) => {
+        // It should return an object that behaves like a Response
+        const responseBody = body ? JSON.stringify(body) : null;
+        const responseHeaders = new Headers(init?.headers);
+        if (body && !responseHeaders.has('content-type')) {
+          responseHeaders.set('content-type', 'application/json');
+        }
+        // Simulate a Response object directly
+        return new MockNextResponse(responseBody, {
+          ...init,
+          headers: responseHeaders,
+        });
+      }),
+      // Keep other static methods like next(), redirect() mocked if needed
+      next: jest.fn(() => {
+        const res = new MockNextResponse(null, { status: 200 }) as unknown as {
+          headers: Headers;
+        } & MockNextResponse;
+        res.headers = new Headers(); // ensure headers are available
+        return res as unknown as MockNextResponse;
+      }),
+      redirect: jest.fn((url, init) => {
+        const status = init?.status || 307;
+        const headers = new Headers(init?.headers);
+        headers.set('Location', url.toString());
+        return new MockNextResponse(null, { status, headers });
+      }),
+    },
+  };
+});
+
+// Restore detailed Request mock if it was overwritten or ensure it's correctly placed
+Object.defineProperty(global, 'Request', {
+  writable: true,
+  value: jest.fn().mockImplementation((input, init) => ({
+    url: typeof input === 'string' ? input : input.url,
+    method: init?.method || 'GET',
+    headers: new Map(Object.entries(init?.headers || {})),
+    json: jest
+      .fn()
+      .mockResolvedValue(init?.body ? JSON.parse(init.body.toString()) : {}),
+    text: jest.fn().mockResolvedValue(init?.body ? init.body.toString() : ''),
+    // Add other Request properties if needed by tests
+  })),
+});
+
+// global.Response mock was problematic, NextResponse.json is now mocked directly.
+// If Response is directly used and needs mocking, it should be done carefully:
+// Object.defineProperty(global, 'Response', {
+//   writable: true,
+//   value: jest.fn().mockImplementation((body, init) => ({
+//     json: () => Promise.resolve(body ? JSON.parse(body as string) : {}),
+//     text: () => Promise.resolve(body ? String(body) : ''),
+//     status: init?.status || 200,
+//     statusText: init?.statusText || 'OK',
+//     headers: new Map(Object.entries(init?.headers || {})),
+//     ok: (init?.status || 200) >= 200 && (init?.status || 200) < 300,
+//   })),
+// });

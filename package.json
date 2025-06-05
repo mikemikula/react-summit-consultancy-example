@@ -12,6 +12,7 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
     "verify": "next lint && tsc --noEmit && pnpm test:ci",
+    "studio": "dotenv -e .env.local -- prisma studio --port 5555 --browser none",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -47,6 +48,7 @@
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
     "dotenv": "^16.5.0",
+    "dotenv-cli": "^7.4.4",
     "eslint": "^9",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
