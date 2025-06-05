@@ -130,17 +130,31 @@ Follow the tasks **strictly in order**. After completing each task:
     - Updated ESLint config to ignore generated Prisma files in `src/generated/**`
     - `pnpm verify` passed successfully
     - No ESLint warnings or errors, TypeScript compilation successful
-- [ ] **3.G Git commit `db layer`** – `git commit -am "3: database layer complete"`.
+- [x] **3.G Git commit `db layer`** – `git commit -am "3: database layer complete"`.
   - Notes:
+    - Committed 9 files including Prisma schema, migrations, and client singleton
+    - Pre-commit hooks ran successfully
+    - Database layer fully configured and working
 
 ## 4. Environment & Secrets
 
-- [ ] **4.1 Add `dotenv` & create env files** – `pnpm add -D dotenv`; create `.env.local` (add to `.gitignore`) and `.env.example` with `DATABASE_URL`, `RESEND_API_KEY`.
+- [x] **4.1 Add `dotenv` & create env files** – `pnpm add -D dotenv`; create `.env.local` (add to `.gitignore`) and `.env.example` with `DATABASE_URL`, `RESEND_API_KEY`.
   - Notes:
-- [ ] **4.2 Install email provider SDK** – `pnpm add resend`.
+    - Installed dotenv 16.5.0 as dev dependency
+    - Created `.env.local` with actual secrets (ignored by git)
+    - Created `.env.example` with template values (committed to git)
+    - Updated `.gitignore` to specifically ignore secret env files but allow .env.example
+    - Removed original `.env` file in favor of proper .env.local/.env.example structure
+- [x] **4.2 Install email provider SDK** – `pnpm add resend`.
   - Notes:
-- [ ] **4.V pnpm verify & fix** – Run `pnpm verify` for section 4.
+    - Installed Resend 4.5.2 for email sending functionality
+    - Added 17 packages for email handling capabilities
+- [x] **4.V pnpm verify & fix** – Run `pnpm verify` for section 4.
   - Notes:
+    - `pnpm verify` passed successfully
+    - No ESLint warnings or errors
+    - TypeScript compilation successful
+    - Environment and email dependencies configured correctly
 - [ ] **4.G Git commit `env setup`** – `git commit -am "4: env & secrets"`.
   - Notes:
 
