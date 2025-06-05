@@ -6,61 +6,79 @@ import { z } from 'zod';
  * Follows DRY principles with reusable validation patterns and clear business rules
  */
 export const leadSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, 'First name is required')
-    .min(2, 'First name must be at least 2 characters')
-    .max(50, 'First name must be less than 50 characters')
-    .regex(/^[a-zA-Z\s'-]+$/, 'First name can only contain letters, spaces, apostrophes, and hyphens')
-    .trim(),
+  /* Helper to trim input before any validation */
+  firstName: z.preprocess(
+    val => (typeof val === 'string' ? val.trim() : val),
+    z
+      .string()
+      .min(1, 'First name is required')
+      .min(2, 'First name must be at least 2 characters')
+      .max(50, 'First name must be less than 50 characters')
+      .regex(
+        /^[a-zA-Z\s'-]+$/,
+        'First name can only contain letters, spaces, apostrophes, and hyphens'
+      )
+  ),
 
-  lastName: z
-    .string()
-    .min(1, 'Last name is required')
-    .min(2, 'Last name must be at least 2 characters')
-    .max(50, 'Last name must be less than 50 characters')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Last name can only contain letters, spaces, apostrophes, and hyphens')
-    .trim(),
+  lastName: z.preprocess(
+    val => (typeof val === 'string' ? val.trim() : val),
+    z
+      .string()
+      .min(1, 'Last name is required')
+      .min(2, 'Last name must be at least 2 characters')
+      .max(50, 'Last name must be less than 50 characters')
+      .regex(
+        /^[a-zA-Z\s'-]+$/,
+        'Last name can only contain letters, spaces, apostrophes, and hyphens'
+      )
+  ),
 
-  email: z
-    .string()
-    .min(1, 'Email address is required')
-    .email('Please enter a valid email address')
-    .max(254, 'Email address is too long')
-    .toLowerCase()
-    .trim(),
+  email: z.preprocess(
+    val => (typeof val === 'string' ? val.trim().toLowerCase() : val),
+    z
+      .string()
+      .min(1, 'Email address is required')
+      .email('Please enter a valid email address')
+      .max(254, 'Email address is too long')
+  ),
 
-  company: z
-    .string()
-    .min(1, 'Company name is required')
-    .min(2, 'Company name must be at least 2 characters')
-    .max(100, 'Company name must be less than 100 characters')
-    .trim(),
+  company: z.preprocess(
+    val => (typeof val === 'string' ? val.trim() : val),
+    z
+      .string()
+      .min(1, 'Company name is required')
+      .min(2, 'Company name must be at least 2 characters')
+      .max(100, 'Company name must be less than 100 characters')
+  ),
 
-  phone: z
-    .string()
-    .default('')
-    .refine(
-      (val) => {
-        // Allow empty string or valid phone number formats
-        if (!val || val.trim() === '') return true;
-        // Basic phone validation - allows various formats
-        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-        const cleanPhone = val.replace(/[\s\-\(\)\.]/g, '');
-        return phoneRegex.test(cleanPhone) && cleanPhone.length >= 10;
-      },
-      {
-        message: 'Please enter a valid phone number (minimum 10 digits)',
-      }
-    )
-    .transform((val) => val.trim()),
+  phone: z.preprocess(
+    val => (typeof val === 'string' ? val.trim() : val),
+    z
+      .string()
+      .optional()
+      .refine(
+        val => {
+          if (val === undefined || val === '') return true;
+          const phoneRegex = /^\+?[1-9]\d{9,15}$/;
+          const cleanPhone = val.replace(/[\s\-\(\)\.]/g, '');
+          return phoneRegex.test(cleanPhone);
+        },
+        {
+          message:
+            'Please enter a valid phone number (e.g., +1 555 123 4567, at least 10-16 digits total).',
+        }
+      )
+      .transform(val => val ?? '')
+  ),
 
-  message: z
-    .string()
-    .min(1, 'Message is required')
-    .min(10, 'Message must be at least 10 characters')
-    .max(2000, 'Message must be less than 2000 characters')
-    .trim(),
+  message: z.preprocess(
+    val => (typeof val === 'string' ? val.trim() : val),
+    z
+      .string()
+      .min(1, 'Message is required')
+      .min(10, 'Message must be at least 10 characters')
+      .max(2000, 'Message must be less than 2000 characters')
+  ),
 });
 
 /**
@@ -94,7 +112,7 @@ export const createPartialLeadSchema = () => leadSchema.partial();
 /**
  * Helper function to validate lead data and return formatted errors
  * Provides consistent error handling across the application
- * 
+ *
  * @param data - The data to validate
  * @returns Object with success status and data or errors
  */
@@ -112,8 +130,8 @@ export function validateLeadData(data: unknown): {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string[]> = {};
-      
-      error.errors.forEach((err) => {
+
+      error.errors.forEach(err => {
         const path = err.path.join('.');
         if (!errors[path]) {
           errors[path] = [];
@@ -126,7 +144,7 @@ export function validateLeadData(data: unknown): {
         errors,
       };
     }
-    
+
     // Handle unexpected errors
     return {
       success: false,
@@ -140,7 +158,7 @@ export function validateLeadData(data: unknown): {
 /**
  * Helper to safely parse and validate lead data for API endpoints
  * Includes additional safety checks for server-side processing
- * 
+ *
  * @param data - Raw request data
  * @returns Validation result with type safety
  */
@@ -158,8 +176,8 @@ export async function validateLeadApiData(data: unknown): Promise<{
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string[]> = {};
-      
-      error.errors.forEach((err) => {
+
+      error.errors.forEach(err => {
         const path = err.path.join('.');
         if (!errors[path]) {
           errors[path] = [];
@@ -172,7 +190,7 @@ export async function validateLeadApiData(data: unknown): Promise<{
         errors,
       };
     }
-    
+
     return {
       success: false,
       errors: {
@@ -180,4 +198,4 @@ export async function validateLeadApiData(data: unknown): Promise<{
       },
     };
   }
-} 
+}
