@@ -212,6 +212,7 @@ The lead funnel will be implemented as a contact form with the following fields:
 
 6. **Secrets & Environment Variables**
    * Store credentials (DB URL, email API key) in **`.env.local`**.
+   * `DATABASE_URL` should point to the Postgres database named **`sf_consultancy_mvp`** (e.g., `postgres://user:password@localhost:5432/sf_consultancy_mvp`).
    * Never commit secret files—blocked via `.gitignore` and pre-commit hook.
 
 7. **Email Security**
