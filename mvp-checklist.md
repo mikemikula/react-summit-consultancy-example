@@ -93,22 +93,43 @@ Follow the tasks **strictly in order**. After completing each task:
     - `pnpm verify` passed successfully
     - No ESLint warnings or errors
     - TypeScript compilation successful
-- [ ] **2.G Git commit `core tooling`** – `git commit -am "2: tooling setup"`.
+- [x] **2.G Git commit `core tooling`** – `git commit -am "2: tooling setup"`.
   - Notes:
+    - Committed 7 files with tooling setup changes
+    - Pre-commit hook ran automatically, confirming Husky/lint-staged work
+    - Added Tailwind config, Prettier config, Husky hooks, and enhanced ESLint
 
 ## 3. Database Layer
 
-- [ ] **3.1 Install PostgreSQL locally (or Docker)** and create empty DB.
+- [x] **3.1 Install PostgreSQL locally (or Docker)** and create empty DB.
   - Notes:
+    - PostgreSQL 14.15 already installed via Homebrew
+    - Created database **sf_consultancy_mvp** successfully
+    - Database owner: mikemikula, encoding: UTF8
   - Create database **sf_consultancy_mvp**.
-- [ ] **3.2 Add Prisma 5.x & initialise schema** – `pnpm add -D prisma && pnpm add @prisma/client && pnpm prisma init`; edit `prisma/schema.prisma` with `Lead` model.
+- [x] **3.2 Add Prisma 5.x & initialise schema** – `pnpm add -D prisma && pnpm add @prisma/client && pnpm prisma init`; edit `prisma/schema.prisma` with `Lead` model.
   - Notes:
-- [ ] **3.3 Run initial migration** – `pnpm prisma migrate dev`.
+    - Installed Prisma 6.9.0 (dev dependency) and @prisma/client 6.9.0
+    - Initialized Prisma with `pnpm prisma init`
+    - Added Lead model with fields: id, firstName, lastName, email, company, phone, message, timestamps
+    - Schema configured for PostgreSQL database
+- [x] **3.3 Run initial migration** – `pnpm prisma migrate dev`.
   - Notes:
-- [ ] **3.4 Create Prisma client singleton** – create folder `lib/` and file: `lib/prisma.ts`.
+    - Updated DATABASE_URL to point to local PostgreSQL database
+    - Created and applied migration "20250605041221_init"
+    - Database is now in sync with schema
+    - Prisma Client generated to ./src/generated/prisma
+- [x] **3.4 Create Prisma client singleton** – create folder `lib/` and file: `lib/prisma.ts`.
   - Notes:
-- [ ] **3.V pnpm verify & fix** – Run `pnpm verify` for section 3.
+    - Created `lib/` directory and `lib/prisma.ts` file
+    - Implemented singleton pattern to prevent multiple Prisma Client instances
+    - Configured with query logging for development
+    - Import path points to generated client: `../src/generated/prisma`
+- [x] **3.V pnpm verify & fix** – Run `pnpm verify` for section 3.
   - Notes:
+    - Updated ESLint config to ignore generated Prisma files in `src/generated/**`
+    - `pnpm verify` passed successfully
+    - No ESLint warnings or errors, TypeScript compilation successful
 - [ ] **3.G Git commit `db layer`** – `git commit -am "3: database layer complete"`.
   - Notes:
 
