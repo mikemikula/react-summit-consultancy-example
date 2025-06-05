@@ -155,15 +155,50 @@ Follow the tasks **strictly in order**. After completing each task:
     - No ESLint warnings or errors
     - TypeScript compilation successful
     - Environment and email dependencies configured correctly
-- [ ] **4.G Git commit `env setup`** – `git commit -am "4: env & secrets"`.
+- [x] **4.G Git commit `env setup`** – `git commit -am "4: env & secrets"`.
   - Notes:
+    - Committed 5 files including .env.example, updated .gitignore, package.json
+    - Pre-commit hooks ran successfully
+    - Environment variables and email SDK properly configured
 
 ## 5. UI Pages
 
-- [ ] **5.1 Build root layout** – file: `app/layout.tsx`; import globals & meta.
+- [x] **5.1 Build root layout** – file: `app/layout.tsx`; import globals & meta.
   - Notes:
-- [ ] **5.2 Build Home page** – file: `app/page.tsx`; headline, service overview, CTA.
+    - Enhanced layout with comprehensive SEO metadata and Open Graph tags
+    - Added structured HTML with proper semantic elements
+    - Configured responsive design classes and smooth scrolling
+    - Professional metadata for Salesforce consultancy branding
+- [x] **5.2 Build Home page** – file: `app/page.tsx`; headline, service overview, CTA.
   - Notes:
-- [ ] **5.3 Build Services page** – create folder `app/services/` and file: `app/services/page.tsx`.
+    - Created compelling hero section with strong headline about Salesforce ROI
+    - Added services overview with three key expertise areas (Implementation, Customization, Optimization)
+    - Implemented clear call-to-action section with contact forms
+    - Used modern responsive design with Tailwind CSS
+    - Included proper navigation links to other pages
+- [x] **5.3 Build Services page** – create folder `app/services/` and file: `app/services/page.tsx`.
   - Notes:
-- [ ] **5.4 Build Thank-You page** – create folder `
+    - Created comprehensive services page with 6 detailed service offerings
+    - Added features list for each service (Implementation, Custom Development, Optimization, Training, Data Migration, Managed Services)
+    - Included 4-step process methodology section
+    - Professional design with hero, services grid, process, and CTA sections
+- [x] **5.4 Build Thank-You page** – create folder `app/thank-you/` and file: `app/thank-you/page.tsx`.
+  - Notes:
+    - Created user-friendly thank-you page for form submissions
+    - Added success icon, clear messaging, and next steps information
+    - Included navigation options back to home and services
+    - Contact information for immediate assistance
+- [x] **5.5 Build Privacy page** – create folder `app/privacy/` and file: `app/privacy/page.tsx` (simple privacy statement).
+  - Notes:
+    - Created comprehensive privacy policy with all essential sections
+    - Covered information collection, usage, protection, and user rights
+    - Included cookie policy and third-party services disclosure
+    - Professional layout with clear navigation back to home
+- [x] **5.V pnpm verify & fix** – Run `pnpm verify` for section 5.
+  - Notes:
+    - Fixed ESLint errors related to unescaped apostrophes in JSX content
+    - `pnpm verify` passed successfully
+    - No ESLint warnings or errors, TypeScript compilation successful
+    - All UI pages properly configured and working
+- [ ] **5.G Git commit `ui pages`** – `git commit -am "5: ui pages"`.
+  - Notes:
