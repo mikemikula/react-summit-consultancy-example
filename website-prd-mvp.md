@@ -119,9 +119,10 @@ The lead funnel will be implemented as a contact form with the following fields:
 | 9 | PostgreSQL 15 (local/docker) | `brew install postgresql@15` | Relational database | After initial UI ready |
 |10 | Prisma 5.x | `pnpm add -D prisma`<br/>`pnpm add @prisma/client` | ORM & migrations | DB layer setup |
 |11 | dotenv | `pnpm add -D dotenv` | Environment variable management | Immediately after DB connection |
-|12 | Security libs (helmet/next-secure-headers & rate-limiter-flexible) | `pnpm add helmet next-secure-headers rate-limiter-flexible` | Secure HTTP headers & API rate limiting | Before first production deploy |
-|13 | Testing libs (Jest, RTL) | `pnpm add -D jest @testing-library/react` | Unit & integration tests | After core features |
-|14 | Vercel CLI | `pnpm add -g vercel` | Deployment & previews on Vercel | Continuous deployment |
+|12 | Email provider SDK (e.g., Resend) | `pnpm add @resend/node` | Send transactional emails on lead capture | After environment setup |
+|13 | Security libs (helmet/next-secure-headers & rate-limiter-flexible) | `pnpm add helmet next-secure-headers rate-limiter-flexible` | Secure HTTP headers & API rate limiting | Before first production deploy |
+|14 | Testing libs (Jest, RTL) | `pnpm add -D jest @testing-library/react` | Unit & integration tests | After core features |
+|15 | Vercel CLI | `pnpm add -g vercel` | Deployment & previews on Vercel | Continuous deployment |
 
 > **Rationale**: Dependencies are listed in the exact order they will be introduced during development, enabling a linear, fail-fast workflow. Each step builds upon the previous, ensuring minimal context-switching and clear ownership.
 
