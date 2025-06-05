@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -9,15 +9,23 @@ import type { LeadSubmissionResponse } from '@/types/lead';
 
 /**
  * Professional lead capture form component for SF Consultancy
- * Features comprehensive validation, accessibility, loading states, and error handling
+ * Features comprehensive validation, accessibility, loading states, error handling, and local storage
  * Follows SOLID principles with single responsibility and proper separation of concerns
- * Implements modern UX patterns with real-time validation and user feedback
+ * Implements modern UX patterns with real-time validation, user feedback, and auto-save functionality
  */
+
+// Local storage key for form data persistence
+const FORM_STORAGE_KEY = 'sf_consultancy_lead_form';
+
+// Auto-save delay in milliseconds
+const AUTO_SAVE_DELAY = 1000;
+
 export default function LeadForm(): JSX.Element {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const {
     register,
@@ -25,6 +33,8 @@ export default function LeadForm(): JSX.Element {
     formState: { errors, isValid, touchedFields },
     reset,
     clearErrors,
+    watch,
+    setValue,
   } = useForm<LeadFormData>({
     resolver: zodResolver(leadSchema),
     mode: 'onBlur', // Validate on blur for better UX
@@ -38,6 +48,103 @@ export default function LeadForm(): JSX.Element {
       message: '',
     },
   });
+
+  // Watch all form values for auto-save functionality
+  const watchedValues = watch();
+
+  /**
+   * Utility functions for localStorage operations
+   * Handles browser compatibility and error cases gracefully
+   */
+  const isLocalStorageAvailable = (): boolean => {
+    try {
+      return typeof window !== 'undefined' && 'localStorage' in window;
+    } catch {
+      return false;
+    }
+  };
+
+  const saveToLocalStorage = useCallback((data: Partial<LeadFormData>): void => {
+    if (!isLocalStorageAvailable()) return;
+    
+    try {
+      // Only save non-empty values to avoid storing empty placeholders
+      const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+        if (value && value.trim() !== '') {
+          acc[key as keyof LeadFormData] = value;
+        }
+        return acc;
+      }, {} as Partial<LeadFormData>);
+
+      if (Object.keys(filteredData).length > 0) {
+        localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(filteredData));
+        setAutoSaveStatus('saved');
+        
+        // Reset status after 2 seconds
+        setTimeout(() => setAutoSaveStatus('idle'), 2000);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to save form data to localStorage:', error);
+    }
+  }, []);
+
+  const loadFromLocalStorage = useCallback((): Partial<LeadFormData> | null => {
+    if (!isLocalStorageAvailable()) return null;
+    
+    try {
+      const saved = localStorage.getItem(FORM_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to load form data from localStorage:', error);
+      return null;
+    }
+  }, []);
+
+  const clearLocalStorage = useCallback((): void => {
+    if (!isLocalStorageAvailable()) return;
+    
+    try {
+      localStorage.removeItem(FORM_STORAGE_KEY);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to clear form data from localStorage:', error);
+    }
+  }, []);
+
+  /**
+   * Load saved form data on component mount
+   * Restores user's previous input for better UX
+   */
+  useEffect(() => {
+    const savedData = loadFromLocalStorage();
+    if (savedData) {
+      Object.entries(savedData).forEach(([key, value]) => {
+        if (value) {
+          setValue(key as keyof LeadFormData, value, {
+            shouldValidate: false,
+            shouldDirty: true,
+          });
+        }
+      });
+    }
+  }, [loadFromLocalStorage, setValue]);
+
+  /**
+   * Auto-save form data when values change
+   * Debounced to avoid excessive localStorage writes
+   */
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (watchedValues && Object.values(watchedValues).some(value => value?.trim())) {
+        setAutoSaveStatus('saving');
+        saveToLocalStorage(watchedValues);
+      }
+    }, AUTO_SAVE_DELAY);
+
+    return () => clearTimeout(timeoutId);
+  }, [watchedValues, saveToLocalStorage]);
 
   /**
    * Handle form submission with comprehensive error handling and user feedback
@@ -80,6 +187,7 @@ export default function LeadForm(): JSX.Element {
 
       // Success handling
       setSubmitSuccess(true);
+      clearLocalStorage(); // Clear saved form data after successful submission
       reset(); // Clear form
 
       // Redirect to thank you page after short delay
@@ -168,6 +276,40 @@ export default function LeadForm(): JSX.Element {
 
   return (
     <div className="max-w-xl mx-auto">
+      {/* Auto-save Status Indicator */}
+      {autoSaveStatus !== 'idle' && (
+        <div className="mb-4 flex items-center justify-center text-sm text-gray-600">
+          {autoSaveStatus === 'saving' && (
+            <>
+              <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Saving draft...
+            </>
+          )}
+          {autoSaveStatus === 'saved' && (
+            <>
+              <svg className="h-4 w-4 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-green-600">Draft saved</span>
+            </>
+          )}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         {/* First Name and Last Name Row */}
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -448,6 +590,10 @@ export default function LeadForm(): JSX.Element {
               privacy policy
             </a>
             . We&apos;ll respond within 24 hours.
+            <br />
+            <span className="text-gray-400">
+              💾 Your form data is automatically saved as you type
+            </span>
           </p>
         </div>
       </form>
