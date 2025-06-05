@@ -15,8 +15,11 @@ Follow the tasks **strictly in order**. After completing each task:
 
 ## 0. Pre-Flight
 
-- [ ] **0.1 Validate local toolchain** – Confirm Node.js 20.x, pnpm ≥8, git installed.
+- [x] **0.1 Validate local toolchain** – Confirm Node.js 20.x, pnpm ≥8, git installed.
   - Notes:
+    - Node.js version: v18.20.5 (Checklist specifies 20.x)
+    - pnpm version: 10.5.0
+    - git version: 2.47.0
 - [ ] **0.2 Clone / initialise repo** – `git clone` or `git init` in empty dir; create `main` and `mvp` branches.
   - Notes:
 - [ ] **0.V pnpm verify & fix** – Run `pnpm verify` and resolve any issues introduced in section 0.
@@ -174,4 +177,4 @@ Follow the tasks **strictly in order**. After completing each task:
 
 ---
 
-**When every task shows `[x]`, the MVP is complete. Do not skip steps or reorder them.** 
+**When every task shows `[x]`, the MVP is complete. Do not skip steps or reorder them.**
