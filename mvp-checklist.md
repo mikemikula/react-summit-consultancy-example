@@ -20,8 +20,11 @@ Follow the tasks **strictly in order**. After completing each task:
     - Node.js version: v18.20.5 (Checklist specifies 20.x)
     - pnpm version: 10.5.0
     - git version: 2.47.0
-- [ ] **0.2 Clone / initialise repo** – `git clone` or `git init` in empty dir; create `main` and `mvp` branches.
+- [x] **0.2 Clone / initialise repo** – `git clone` or `git init` in empty dir; create `main` and `mvp` branches.
   - Notes:
+    - Repository already initialized.
+    - `main` branch existed.
+    - Created and switched to `mvp` branch.
 - [ ] **0.V pnpm verify & fix** – Run `pnpm verify` and resolve any issues introduced in section 0.
   - Notes:
 - [ ] **0.G Git commit `pre-flight`** – `git commit -am "0: pre-flight complete"`.
