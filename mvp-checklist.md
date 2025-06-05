@@ -2,6 +2,7 @@
 
 This checklist guides an **AI development agent** through building the entire MVP described in `website-prd-mvp.md`.  
 Follow the tasks **strictly in order**. After completing each task:
+
 1. Add implementation notes indented under the task (bullet list).
 2. Change the checkbox `[ ]` → `[x]`.
 3. Run `pnpm verify` to lint and type-check the workspace.
@@ -55,21 +56,43 @@ Follow the tasks **strictly in order**. After completing each task:
     - Verify script not yet added (will be added in section 2.2)
     - Ran `pnpm lint && npx tsc --noEmit` manually
     - No ESLint warnings or errors, TypeScript check passed
-- [ ] **1.G Git commit `project scaffold`** – `git commit -am "1: scaffold complete"`.
+- [x] **1.G Git commit `project scaffold`** – `git commit -am "1: scaffold complete"`.
   - Notes:
+    - Committed 18 files including Next.js setup, TypeScript config, ESLint config
+    - Next.js 15.3.3 with React 18.3.1 for compatibility
 
 ## 2. Core Tooling
 
-- [ ] **2.1 Add Tailwind CSS v4 config** – create `tailwind.config.ts` at project root and `styles/globals.css`.
+- [x] **2.1 Add Tailwind CSS v4 config** – create `tailwind.config.ts` at project root and `styles/globals.css`.
   - Notes:
-- [ ] **2.2 Add ESLint + Prettier + Airbnb config** – update `.eslintrc.json` and add "verify" script to `package.json`: `"verify": "next lint && tsc --noEmit"`.
+    - Created `tailwind.config.ts` with TypeScript configuration
+    - Tailwind CSS v4.1.8 already installed and configured
+    - globals.css exists at `src/app/globals.css` with v4 syntax (`@import "tailwindcss"`)
+    - PostCSS configured with `@tailwindcss/postcss` plugin
+- [x] **2.2 Add ESLint + Prettier + Airbnb config** – update `.eslintrc.json` and add "verify" script to `package.json`: `"verify": "next lint && tsc --noEmit"`.
   - Notes:
-- [ ] **2.3 Add Husky & lint-staged pre-commit hooks**.
+    - Updated `eslint.config.mjs` with enhanced rules (Next.js 15 uses flat config)
+    - Installed Prettier 3.5.3 with `.prettierrc.json` configuration
+    - Added "verify" script to package.json: `next lint && tsc --noEmit`
+    - Simplified ESLint config for compatibility (Airbnb had version conflicts)
+    - `pnpm verify` runs successfully with no errors
+- [x] **2.3 Add Husky & lint-staged pre-commit hooks**.
   - Notes:
-- [ ] **2.4 Install Zod and React Hook Form** – `pnpm add zod react-hook-form @hookform/resolvers`.
+    - Installed Husky 9.1.7 and lint-staged 16.1.0
+    - Initialized Husky with `npx husky init`
+    - Configured lint-staged to run ESLint --fix and Prettier on staged files
+    - Updated pre-commit hook to run `npx lint-staged`
+    - Tested successfully: pre-commit hook formats and lints staged files
+- [x] **2.4 Install Zod and React Hook Form** – `pnpm add zod react-hook-form @hookform/resolvers`.
   - Notes:
-- [ ] **2.V pnpm verify & fix** – Run `pnpm verify` for section 2.
+    - Installed Zod 3.25.51 for schema validation
+    - Installed React Hook Form 7.57.0 for form management
+    - Installed @hookform/resolvers 5.0.1 for Zod integration
+- [x] **2.V pnpm verify & fix** – Run `pnpm verify` for section 2.
   - Notes:
+    - `pnpm verify` passed successfully
+    - No ESLint warnings or errors
+    - TypeScript compilation successful
 - [ ] **2.G Git commit `core tooling`** – `git commit -am "2: tooling setup"`.
   - Notes:
 
